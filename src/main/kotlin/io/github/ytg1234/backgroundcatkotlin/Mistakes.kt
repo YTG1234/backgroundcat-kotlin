@@ -25,7 +25,7 @@ fun mistakesFromLog(log: String): List<Mistake> {
 }
 
 private fun getLogSource(log: String): LogSource {
-    if (log.startsWith("MutliMC version")) return MultiMc
+    if (log.startsWith("MultiMC version")) return MultiMc
     return Unknown
 }
 
