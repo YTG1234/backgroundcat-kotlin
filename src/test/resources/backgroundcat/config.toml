@@ -1,0 +1,4 @@
+[parsers]
+disabled = [
+    "mmc_program_files"
+]

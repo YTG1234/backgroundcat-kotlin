@@ -1,7 +1,7 @@
-package io.github.ytg1234.backgroundcatkotlin
+package io.github.ytg1234.test.backgroundcatkotlin
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
-import io.github.ytg1234.backgroundcatkotlin.ext.BackgroundCatExtension
+import io.github.ytg1234.backgroundcatkotlin.util.backgroundcatExt
 import java.io.File
 
 val bot = ExtensibleBot(
@@ -12,6 +12,6 @@ val bot = ExtensibleBot(
 )
 
 suspend fun main() {
-    bot.addExtension(::BackgroundCatExtension)
+    bot.backgroundcatExt()
     bot.start()
 }

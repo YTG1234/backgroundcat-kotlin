@@ -1,5 +1,8 @@
 package io.github.ytg1234.backgroundcatkotlin
 
+import io.github.ytg1234.backgroundcatkotlin.util.internal.ConfigHandler
+import io.github.ytg1234.backgroundcatkotlin.util.internal.logger
+
 enum class Severity(val s: String) {
     Severe("!!"),
     Important("❗"),
@@ -24,14 +27,22 @@ fun interface Parser {
     operator fun invoke(log: Log) = parse(log)
 }
 
-val parsers = mutableSetOf<Parser>()
+val parsers = mutableMapOf<String, Parser>()
 
-fun addParser(parser: Parser) {
-    parsers.add(parser)
+fun addParser(id: String, parser: Parser) {
+    if (id == "") throw IllegalArgumentException("Tried to add a parse for empty ID!")
+    if (parsers[id] != null) throw IllegalArgumentException("Tried to add a parser for ID $id which was already added!")
+
+    if (!ConfigHandler.isParserEnabled(id)) {
+        logger.debug("Not adding parser with ID $id because it is not enabled.")
+        return
+    }
+
+    parsers[id] = parser
 }
 
-fun withParser(parser: Log.() -> Mistake?) {
-    addParser { it.parser() }
+fun withParser(id: String, parser: Log.() -> Mistake?) {
+    addParser(id) { it.parser() }
 }
 
 fun mistakesFromLog(text: String): List<Mistake> {
@@ -39,7 +50,7 @@ fun mistakesFromLog(text: String): List<Mistake> {
     val source = sourceFromLog(text)
     val log = Log(source, text)
 
-    for (parser in parsers) {
+    for ((_, parser) in parsers) {
         val mistake = parser(log) ?: continue
         mistakes.add(mistake)
     }

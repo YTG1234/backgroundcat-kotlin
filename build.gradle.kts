@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.4.21"
     kotlin("plugin.serialization") version "1.4.21"
-    application
 }
 
 group = "io.github.ytg1234"
@@ -27,12 +26,16 @@ dependencies {
     }
 
     implementation("org.slf4j", "slf4j-simple", "1.7.19")
+    implementation("io.github.microutils", "kotlin-logging", "1.12.0")
+
+    // Config
+    implementation("com.uchuhimo", "konf-core", "0.23.0")
+    implementation("com.uchuhimo", "konf-toml", "0.23.0")
+
+    // TESTING
+    testImplementation(sourceSets["main"].output)
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
-}
-
-application {
-    mainClass.set("io.github.ytg1234.backgroundcatkotlin.BotKt")
 }
