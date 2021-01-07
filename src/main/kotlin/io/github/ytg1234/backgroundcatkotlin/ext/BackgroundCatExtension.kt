@@ -5,6 +5,10 @@ import com.kotlindiscord.kord.extensions.extensions.Extension
 import dev.kord.common.Color
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.event.message.MessageCreateEvent
+import io.github.ytg1234.backgroundcatkotlin.LogSource
+import io.github.ytg1234.backgroundcatkotlin.Mistake
+import io.github.ytg1234.backgroundcatkotlin.Severity
+import io.github.ytg1234.backgroundcatkotlin.addParser
 import io.github.ytg1234.backgroundcatkotlin.mistakesFromLog
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -20,6 +24,8 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
     }
 
     override suspend fun setup() {
+        addParsers()
+
         event<MessageCreateEvent> {
             check { it.message.author != null && !it.message.author!!.isBot }
             action {
@@ -62,6 +68,50 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 PasteSites.PASTEEE -> link.replaceFirst("/p/", "/r/")
                 PasteSites.HASTEBIN, PasteSites.PASTEBIN -> link.replaceFirst(".com/", ".com/raw/")
                 PasteSites.PASTEGG -> "$link/raw"
+            }
+        }
+        private fun addParsers() {
+            addParser { log, _ ->
+                if (log.contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && log.contains("requires {fabric @")) {
+                    Mistake(
+                        Severity.Severe,
+                        "You are missing Fabric API, which is required by a mod. " +
+                                "**[Download it here](https://www.curseforge.com/minecraft/mc-mods/fabric-api)**."
+                    )
+                } else null
+            }
+
+            addParser { log, _ ->
+                if (log.contains("org.lwjgl.LWJGLException: Pixel format not accelerated") &&
+                    log.contains("Operating System: Windows 10")) {
+                    Mistake(
+                        Severity.Severe,
+                        "You seem to be using an Intel GPU that is not supported on Windows 10." +
+                                "**You will need to install an older version of Java, [see here for help](https://github.com/MultiMC/MultiMC5/wiki/Unsupported-Intel-GPUs)**."
+                    )
+                } else null
+            }
+
+            addParser { log, source ->
+                if (source == LogSource.MultiMc && log.contains("Your Java architecture is not matching your system architecture.")) {
+                    Mistake(
+                        Severity.Severe,
+                        "You're using 32-bit Java. " +
+                                "[See here for help installing the correct version.](https://github.com/MultiMC/MultiMC5/wiki/Using-the-right-Java)."
+                    )
+                } else null
+            }
+
+            addParser { log, source ->
+                if (source == LogSource.MultiMc && Regex("Minecraft folder is:(\r?)\nC:(\\|/)Program Files").containsMatchIn(log)) {
+                    Mistake(
+                        Severity.Severe,
+                        """
+                    |Your MultiMC installation is in Program Files, where MultiMC doesn't have permission to write.
+                    |**Move it somewhere else, like your Desktop.**
+                """.trimMargin("|")
+                    )
+                } else null
             }
         }
     }
