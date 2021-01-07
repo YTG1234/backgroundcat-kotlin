@@ -30,7 +30,7 @@ fun addParser(parser: Parser) {
     parsers.add(parser)
 }
 
-fun moreParsers(parser: Log.() -> Mistake?) {
+fun withParser(parser: Log.() -> Mistake?) {
     addParser { it.parser() }
 }
 

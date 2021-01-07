@@ -8,7 +8,7 @@ import dev.kord.core.event.message.MessageCreateEvent
 import io.github.ytg1234.backgroundcatkotlin.LogSource
 import io.github.ytg1234.backgroundcatkotlin.Mistake
 import io.github.ytg1234.backgroundcatkotlin.Severity
-import io.github.ytg1234.backgroundcatkotlin.moreParsers
+import io.github.ytg1234.backgroundcatkotlin.withParser
 import io.github.ytg1234.backgroundcatkotlin.mistakesFromLog
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -73,7 +73,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
 
         private fun addParsers() {
             // region Common Errors
-            moreParsers {
+            withParser {
                 if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains("requires {fabric @")) {
                     Mistake(
                         Severity.Severe,
@@ -83,7 +83,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (contains("org.lwjgl.LWJGLException: Pixel format not accelerated") &&
                     contains("Operating System: Windows 10")) {
                     Mistake(
@@ -94,7 +94,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (contains(Regex("java.lang.OutOfMemory(Error|Exception)"))) {
                     Mistake(
                         Severity.Severe,
@@ -109,7 +109,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
             // endregion
 
             // region Uncommon errors
-            moreParsers {
+            withParser {
                 if (contains("Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'")) {
                     Mistake(
                         Severity.Severe,
@@ -118,7 +118,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (contains("java.lang.RuntimeException: Invalid id 4096 - maximum id range exceeded.")) {
                     Mistake(
                         Severity.Severe,
@@ -129,7 +129,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
             // endregion
 
             // region Mod-specific errors
-            moreParsers {
+            withParser {
                 if (contains("java.lang.RuntimeException: Shaders Mod detected. Please remove it, OptiFine has built-in support for shaders.")) {
                     Mistake(
                         Severity.Severe,
@@ -140,7 +140,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
             // endregion
 
             // region MultiMC-specific errors
-            moreParsers {
+            withParser {
                 if (contains("-Bit Server VM warning")) {
                     Mistake(
                         Severity.Severe,
@@ -149,7 +149,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (source == LogSource.MultiMc && contains(Regex("Minecraft folder is:\r?\nC:/Program Files"))) {
                     Mistake(
                         Severity.Severe,
@@ -161,7 +161,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (source == LogSource.MultiMc && contains("Your Java architecture is not matching your system architecture.")) {
                     Mistake(
                         Severity.Important,
@@ -171,7 +171,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (source == LogSource.MultiMc && contains(Regex("Minecraft folder is:\r?\nC:/.+/.+/OneDrive"))) {
                     Mistake(
                         Severity.Important,
@@ -183,7 +183,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                 } else null
             }
 
-            moreParsers {
+            withParser {
                 if (source == LogSource.MultiMc && contains(Regex("-Xmx([0-9]+)m[,\\]]"))) {
                     val match = Regex("-Xmx([0-9]+)m[,\\]]").find(text)
                     val amount = match!!.groupValues[1].toInt() / 1000.0
