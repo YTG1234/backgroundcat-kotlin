@@ -1,0 +1,14 @@
+
+.gradle/
+run/
+.idea/
+
+.gradle
+run
+.idea
+
+token.txt
+
+# Project exclude paths
+/out/
+/out/production/classes/
