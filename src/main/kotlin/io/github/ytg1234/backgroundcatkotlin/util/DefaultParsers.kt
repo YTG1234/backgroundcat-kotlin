@@ -159,7 +159,7 @@ private fun addBlocking() {
         )
         if (tlauncherTriggers.stream().anyMatch(this::contains)) {
             Mistake(
-                Severity.Illegal,
+                Severity.NoSupport,
                 "You are using TLauncher, which is illegal and breaks the Discord TOS. Sorry, we can't help you.\n" +
                         "You can buy Minecraft from the [official website](https://minecraft.net/)."
             )
@@ -176,7 +176,7 @@ private fun addBlocking() {
 
         if (hacks.stream().anyMatch { contains(Regex("""\[FabricLoader] Loading \d+ mods:.+$it@.+""")) }) {
             Mistake(
-                Severity.Illegal,
+                Severity.NoSupport,
                 "You are using a hacked client, which breaks the Discord TOS. Sorry, we can't help you."
             )
         } else null
