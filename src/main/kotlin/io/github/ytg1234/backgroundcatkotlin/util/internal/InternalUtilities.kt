@@ -9,7 +9,7 @@ import java.io.File
 
 val logger = KotlinLogging.logger("Background Cat")
 
-object ConfigHandler {
+object ConfigHolder {
     var config = Config {
         addSpec(ParserSpec)
     }
@@ -27,7 +27,7 @@ object ConfigHandler {
             .from.prefixed("backgroundcat").systemProperties()
     }
 
-    fun isParserEnabled(id: String): Boolean {
-        return !config[ParserSpec.disabled].contains(id)
-    }
+    fun isParserEnabled(id: String) = !config[ParserSpec.disabled].contains(id)
+
+    fun isBlockingParserEnabled(id: String) = !config[ParserSpec.disabledBlocking].contains(id)
 }

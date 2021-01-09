@@ -3,9 +3,12 @@ package io.github.ytg1234.backgroundcatkotlin.util
 import io.github.ytg1234.backgroundcatkotlin.LogSource
 import io.github.ytg1234.backgroundcatkotlin.Mistake
 import io.github.ytg1234.backgroundcatkotlin.Severity
+import io.github.ytg1234.backgroundcatkotlin.withBlocking
 import io.github.ytg1234.backgroundcatkotlin.withParser
 
 fun setupDefaultParsers() {
+    addBlocking()
+
     setupCommonErrors()
     setupUncommonErrors()
     setupModSpecificErrors()
@@ -132,6 +135,36 @@ private fun setupMultiMcSpecificErrors() {
                 Severity.Warn,
                 "You have allocated ${amount}GB of RAM to Minecraft. [This is too much and can cause lagspikes](https://vazkii.net/#blog/ram-explanation)." // <-- MCP Names
             ) else null
+        } else null
+    }
+}
+
+private fun addBlocking() {
+    withBlocking("tlauncher") {
+        val tlauncher_triggers = listOf(
+            Regex("""Starting TLauncher \d+\.\d+"""),
+            Regex("""\[Launcher] Running under TLauncher \d+\.\d+""")
+        )
+        if (tlauncher_triggers.stream().anyMatch(this::contains)) {
+            Mistake(
+                Severity.Illegal,
+                "You are using TLauncher, which is illegal and breaks the Discord TOS. Sorry, we can't help you.\n" +
+                        "You can buy Minecraft from the [official website](https://minecraft.net/)."
+            )
+        } else null
+    }
+
+    withBlocking("hacks") {
+        val hacks = listOf(
+            "wurst",
+            "meteor-client"
+        )
+
+        if (hacks.stream().anyMatch { contains(Regex("""\[FabricLoader] Loading \d+ mods:.+$it@.+""")) }) {
+            Mistake(
+                Severity.Illegal,
+                "You are using a hacked client, which breaks the Discord TOS. Sorry, we can't help you."
+            )
         } else null
     }
 }

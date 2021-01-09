@@ -4,4 +4,5 @@ import com.uchuhimo.konf.ConfigSpec
 
 object ParserSpec : ConfigSpec("parsers") {
     val disabled by required<List<String>>()
+    val disabledBlocking by required<List<String>>()
 }
