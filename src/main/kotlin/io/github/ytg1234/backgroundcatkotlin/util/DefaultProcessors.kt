@@ -189,7 +189,10 @@ private fun setupLater() {
     withProcessor("dependency", LogProcessorOption.CancelIfRan("fabric_api_missing", "malilib")) {
         val regex = Regex("""requires \{([a-zA-Z0-9_-]+) @ \[(.+)]}""")
 
-        if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains(regex)) {
+        if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains(
+                regex
+            )
+        ) {
             val match = regex.find(this)!!
             val modid = match.groupValues[1]
             val version = match.groupValues[2]

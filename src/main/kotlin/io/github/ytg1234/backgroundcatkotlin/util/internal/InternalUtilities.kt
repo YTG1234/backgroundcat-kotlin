@@ -15,11 +15,14 @@ object ConfigHolder {
     }
         .from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).toml.resource("backgroundcat/default.toml")
         .from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).toml.resource("backgroundcat/config.toml", optional = true)
-    private set
+        private set
 
     init {
         if (File("config/ext/backgroundcat.toml").exists()) {
-            config = config.from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).toml.watchFile("config/ext/backgroundcat.toml", optional = true)
+            config = config.from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).toml.watchFile(
+                "config/ext/backgroundcat.toml",
+                optional = true
+            )
         }
 
         config = config

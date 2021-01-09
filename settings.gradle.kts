@@ -1,3 +1,1 @@
-
 rootProject.name = "backgroundcat-kotlin"
-

@@ -10,11 +10,13 @@ interface LogProcessorWithOptions : LogProcessor {
 
     companion object {
         @JvmStatic
-        fun of(options: Set<LogProcessorOption>, process: Log.() -> Mistake?)  = LogProcessorWithOptionsImpl(options) { it.process() }
+        fun of(options: Set<LogProcessorOption>, process: Log.() -> Mistake?) =
+            LogProcessorWithOptionsImpl(options) { it.process() }
     }
 }
 
-class LogProcessorWithOptionsImpl(override val options: Set<LogProcessorOption>, private val delegate: LogProcessor) : LogProcessorWithOptions {
+class LogProcessorWithOptionsImpl(override val options: Set<LogProcessorOption>, private val delegate: LogProcessor) :
+    LogProcessorWithOptions {
     override fun process(log: Log): Mistake? = delegate.process(log)
 }
 
