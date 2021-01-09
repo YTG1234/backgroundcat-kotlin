@@ -169,7 +169,9 @@ private fun addBlocking() {
     withBlocking("hacks") {
         val hacks = listOf(
             "wurst",
-            "meteor-client"
+            "meteor-client",
+            "inertia",
+            "ares"
         )
 
         if (hacks.stream().anyMatch { contains(Regex("""\[FabricLoader] Loading \d+ mods:.+$it@.+""")) }) {
