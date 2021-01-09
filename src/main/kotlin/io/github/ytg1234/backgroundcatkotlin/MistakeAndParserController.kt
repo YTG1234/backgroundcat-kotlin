@@ -4,7 +4,7 @@ import io.github.ytg1234.backgroundcatkotlin.util.internal.ConfigHolder
 import io.github.ytg1234.backgroundcatkotlin.util.internal.logger
 
 enum class Severity(val s: String) {
-    Illegal("ILLEGAL"),
+    Illegal("❌"),
     Severe("!!"),
     Important("❗"),
     Warn("⚠")

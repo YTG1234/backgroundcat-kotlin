@@ -72,12 +72,24 @@ private fun setupUncommonErrors() {
     }
 }
 
-private fun setupModSpecificErrors() { // as expected, only OptiFine is here
+private fun setupModSpecificErrors() {
     withParser("shadermod_optifine_conflict") {
         if (contains("java.lang.RuntimeException: Shaders Mod detected. Please remove it, OptiFine has built-in support for shaders.")) {
             Mistake(
                 Severity.Severe,
                 "You've installed Shaders Mod alongside OptiFine. OptiFine has built-in shader support, so you should remove Shaders Mod."
+            )
+        } else null
+    }
+
+    withParser("malilib") {
+        if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains("requires {malilib @")) {
+            Mistake(
+                Severity.Severe,
+                """
+                    |Litematica, Item Scroller, MiniHUD, and Tweakeroo all require MaLiLib to run. If your game is crashing on launch and you have any of those mods but not MaLiLib, you need it.
+                    |You can download MaLiLib from [here](https://www.curseforge.com/minecraft/mc-mods/malilib).
+                """.trimMargin("|")
             )
         } else null
     }
