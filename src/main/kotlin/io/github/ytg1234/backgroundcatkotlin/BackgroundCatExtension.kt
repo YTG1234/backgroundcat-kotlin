@@ -27,14 +27,17 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
             check { it.message.author != null && !it.message.author!!.isBot }
             action {
                 var rawLink = ""
+
                 PasteSites.values().forEach {
                     val link = it.regex.find(event.message.content)?.value ?: return@forEach
                     rawLink = pasteLinkToRaw(link, it)
                 }
+
                 if (rawLink == "") return@action
                 logger.debug("Found a valid paste site link $rawLink, inspecting...")
 
                 val client = HttpClient()
+
                 val log = try {
                     String(client.get<ByteArray>(rawLink))
                 } catch (t: Throwable) {
@@ -52,7 +55,7 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
                     color = Color(0x11806A)
                     mistakes.forEach {
                         field {
-                            name = it.severity.s
+                            name = it.severity.text
                             value = it.message
                             inline = true
                         }

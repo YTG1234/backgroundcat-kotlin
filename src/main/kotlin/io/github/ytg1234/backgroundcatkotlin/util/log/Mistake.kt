@@ -1,6 +1,6 @@
 package io.github.ytg1234.backgroundcatkotlin.util.log
 
-enum class Severity(val s: String) {
+enum class Severity(val text: String) {
     NoSupport("❌"),
     Severe("!!"),
     Important("❗"),

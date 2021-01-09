@@ -22,7 +22,6 @@ class LogProcessorWithOptionsImpl(override val options: Set<LogProcessorOption>,
 
 sealed class LogProcessorOption {
     data class CancelIfRan(val processors: Set<String>) : LogProcessorOption() {
-        constructor(processor: String) : this(setOf(processor))
         constructor(vararg processors: String) : this(setOf(*processors))
     }
 
