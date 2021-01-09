@@ -141,11 +141,11 @@ private fun setupMultiMcSpecificErrors() {
 
 private fun addBlocking() {
     withBlocking("tlauncher") {
-        val tlauncher_triggers = listOf(
+        val tlauncherTriggers = listOf(
             Regex("""Starting TLauncher \d+\.\d+"""),
             Regex("""\[Launcher] Running under TLauncher \d+\.\d+""")
         )
-        if (tlauncher_triggers.stream().anyMatch(this::contains)) {
+        if (tlauncherTriggers.stream().anyMatch(this::contains)) {
             Mistake(
                 Severity.Illegal,
                 "You are using TLauncher, which is illegal and breaks the Discord TOS. Sorry, we can't help you.\n" +
