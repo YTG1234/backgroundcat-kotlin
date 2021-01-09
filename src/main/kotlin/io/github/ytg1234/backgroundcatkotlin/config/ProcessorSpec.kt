@@ -2,7 +2,6 @@ package io.github.ytg1234.backgroundcatkotlin.config
 
 import com.uchuhimo.konf.ConfigSpec
 
-object ParserSpec : ConfigSpec("parsers") {
+object ProcessorSpec : ConfigSpec("processors") {
     val disabled by required<List<String>>()
-    val disabledBlocking by required<List<String>>()
 }

@@ -1,22 +1,24 @@
 package io.github.ytg1234.backgroundcatkotlin.util
 
-import io.github.ytg1234.backgroundcatkotlin.LogSource
-import io.github.ytg1234.backgroundcatkotlin.Mistake
-import io.github.ytg1234.backgroundcatkotlin.Severity
-import io.github.ytg1234.backgroundcatkotlin.withBlocking
-import io.github.ytg1234.backgroundcatkotlin.withParser
+import io.github.ytg1234.backgroundcatkotlin.util.log.LogProcessorOption
+import io.github.ytg1234.backgroundcatkotlin.util.log.LogSource
+import io.github.ytg1234.backgroundcatkotlin.util.log.Mistake
+import io.github.ytg1234.backgroundcatkotlin.util.log.Severity
+import io.github.ytg1234.backgroundcatkotlin.withProcessor
 
 fun setupDefaultParsers() {
-    addBlocking()
+    addCancelling()
 
     setupCommonErrors()
     setupUncommonErrors()
     setupModSpecificErrors()
     setupMultiMcSpecificErrors()
+
+    setupLater()
 }
 
 private fun setupCommonErrors() {
-    withParser("fabric_api_missing") {
+    withProcessor("fabric_api_missing") {
         if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains("requires {fabric @")) {
             Mistake(
                 Severity.Severe,
@@ -26,7 +28,7 @@ private fun setupCommonErrors() {
         } else null
     }
 
-    withParser("pixel_format_not_accelerated_win10") {
+    withProcessor("pixel_format_not_accelerated_win10") {
         if (contains("org.lwjgl.LWJGLException: Pixel format not accelerated") &&
             contains("Operating System: Windows 10")
         ) {
@@ -38,7 +40,7 @@ private fun setupCommonErrors() {
         } else null
     }
 
-    withParser("out_of_memory_error") {
+    withProcessor("out_of_memory_error") {
         if (contains(Regex("java.lang.OutOfMemory(Error|Exception)"))) {
             Mistake(
                 Severity.Severe,
@@ -53,7 +55,7 @@ private fun setupCommonErrors() {
 }
 
 private fun setupUncommonErrors() {
-    withParser("macos_too_new_java") {
+    withProcessor("macos_too_new_java") {
         if (contains("Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'")) {
             Mistake(
                 Severity.Severe,
@@ -62,7 +64,7 @@ private fun setupUncommonErrors() {
         } else null
     }
 
-    withParser("id_range_exceeded") {
+    withProcessor("id_range_exceeded") {
         if (contains("java.lang.RuntimeException: Invalid id 4096 - maximum id range exceeded.")) {
             Mistake(
                 Severity.Severe,
@@ -73,7 +75,7 @@ private fun setupUncommonErrors() {
 }
 
 private fun setupModSpecificErrors() {
-    withParser("shadermod_optifine_conflict") {
+    withProcessor("shadermod_optifine_conflict") {
         if (contains("java.lang.RuntimeException: Shaders Mod detected. Please remove it, OptiFine has built-in support for shaders.")) {
             Mistake(
                 Severity.Severe,
@@ -82,7 +84,7 @@ private fun setupModSpecificErrors() {
         } else null
     }
 
-    withParser("malilib") {
+    withProcessor("malilib") {
         if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains("requires {malilib @")) {
             Mistake(
                 Severity.Severe,
@@ -96,7 +98,7 @@ private fun setupModSpecificErrors() {
 }
 
 private fun setupMultiMcSpecificErrors() {
-    withParser("server_java") {
+    withProcessor("server_java") {
         if (contains("-Bit Server VM warning")) {
             Mistake(
                 Severity.Severe,
@@ -105,7 +107,7 @@ private fun setupMultiMcSpecificErrors() {
         } else null
     }
 
-    withParser("mmc_program_files") {
+    withProcessor("mmc_program_files") {
         if (source == LogSource.MultiMc && contains(Regex("Minecraft folder is:\r?\nC:/Program Files"))) {
             Mistake(
                 Severity.Severe,
@@ -117,7 +119,7 @@ private fun setupMultiMcSpecificErrors() {
         } else null
     }
 
-    withParser("java_architecture") {
+    withProcessor("java_architecture") {
         if (source == LogSource.MultiMc && contains("Your Java architecture is not matching your system architecture.")) {
             Mistake(
                 Severity.Important,
@@ -127,7 +129,7 @@ private fun setupMultiMcSpecificErrors() {
         } else null
     }
 
-    withParser("multimc_in_onedrive_managed_folder") {
+    withProcessor("multimc_in_onedrive_managed_folder") {
         if (source == LogSource.MultiMc && contains(Regex("Minecraft folder is:\r?\nC:/.+/.+/OneDrive"))) {
             Mistake(
                 Severity.Important,
@@ -139,7 +141,7 @@ private fun setupMultiMcSpecificErrors() {
         } else null
     }
 
-    withParser("ram_amount") {
+    withProcessor("ram_amount") {
         if (source == LogSource.MultiMc && contains(Regex("-Xmx([0-9]+)m[,\\]]"))) {
             val match = Regex("-Xmx([0-9]+)m[,\\]]").find(text)
             val amount = match!!.groupValues[1].toInt() / 1000.0
@@ -151,8 +153,8 @@ private fun setupMultiMcSpecificErrors() {
     }
 }
 
-private fun addBlocking() {
-    withBlocking("tlauncher") {
+private fun addCancelling() {
+    withProcessor("tlauncher", LogProcessorOption.CancelOthers) {
         val tLauncherTriggers = listOf(
             Regex("""Starting TLauncher \d+\.\d+"""),
             Regex("""\[Launcher] Running under TLauncher \d+\.\d+""")
@@ -166,7 +168,7 @@ private fun addBlocking() {
         } else null
     }
 
-    withBlocking("hacks") {
+    withProcessor("hacks", LogProcessorOption.CancelOthers) {
         val hacks = listOf(
             "wurst",
             "meteor-client",
@@ -178,6 +180,23 @@ private fun addBlocking() {
             Mistake(
                 Severity.NoSupport,
                 "You are using a hacked client, which breaks the Discord TOS. Sorry, we can't help you."
+            )
+        } else null
+    }
+}
+
+private fun setupLater() {
+    withProcessor("dependency", LogProcessorOption.CancelIfRan("fabric_api_missing", "malilib")) {
+        val regex = Regex("""requires \{([a-zA-Z0-9_-]+) @ \[(.+)]}""")
+
+        if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains(regex)) {
+            val match = regex.find(this)!!
+            val modid = match.groupValues[1]
+            val version = match.groupValues[2]
+
+            Mistake(
+                Severity.Severe,
+                "A mod that you are using requires a mod with id `$modid`, version `$version`."
             )
         } else null
     }

@@ -3,7 +3,7 @@ package io.github.ytg1234.backgroundcatkotlin.util.internal
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.Feature
 import com.uchuhimo.konf.source.toml
-import io.github.ytg1234.backgroundcatkotlin.config.ParserSpec
+import io.github.ytg1234.backgroundcatkotlin.config.ProcessorSpec
 import mu.KotlinLogging
 import java.io.File
 
@@ -11,7 +11,7 @@ val logger = KotlinLogging.logger("Background Cat")
 
 object ConfigHolder {
     var config = Config {
-        addSpec(ParserSpec)
+        addSpec(ProcessorSpec)
     }
         .from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).toml.resource("backgroundcat/default.toml")
         .from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).toml.resource("backgroundcat/config.toml", optional = true)
@@ -27,7 +27,5 @@ object ConfigHolder {
             .from.prefixed("backgroundcat").systemProperties()
     }
 
-    fun isParserEnabled(id: String) = !config[ParserSpec.disabled].contains(id)
-
-    fun isBlockingParserEnabled(id: String) = !config[ParserSpec.disabledBlocking].contains(id)
+    fun isParserEnabled(id: String) = !config[ProcessorSpec.disabled].contains(id)
 }
