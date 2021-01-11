@@ -7,8 +7,14 @@ import io.github.ytg1234.backgroundcatkotlin.config.ProcessorSpec
 import mu.KotlinLogging
 import java.io.File
 
+/**
+ * @suppress
+ */
 val logger = KotlinLogging.logger("Background Cat")
 
+/**
+ * @suppress
+ */
 object ConfigHolder {
     var config = Config {
         addSpec(ProcessorSpec)

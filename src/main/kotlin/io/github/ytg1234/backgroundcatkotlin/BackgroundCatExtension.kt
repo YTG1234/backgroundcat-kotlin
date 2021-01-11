@@ -10,9 +10,22 @@ import io.github.ytg1234.backgroundcatkotlin.util.setupDefaultParsers
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 
+/**
+ * The [Extension] itself, which controls the entire project.
+ *
+ * @constructor Calls the [Extension] constructor.
+ *
+ * @param bot The [ExtensibleBot] instance that this extension is installed to.
+ */
 class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
     override val name = "backgroundcat"
 
+    /**
+     * Used for keeping a list of valid sites where logs can
+     * be found.
+     *
+     * @param regex The regex that allows to find a website link inside a string of text.
+     */
     private enum class PasteSites(val regex: Regex) {
         PASTEEE(Regex("""https?://paste\.ee/p/[^\s/]+""", RegexOption.IGNORE_CASE)),
         HASTEBIN(Regex("""https?://has?tebin\.com/[^\s/]+""", RegexOption.IGNORE_CASE)),
@@ -67,6 +80,12 @@ class BackgroundCatExtension(bot: ExtensibleBot) : Extension(bot) {
     }
 
     companion object {
+        /**
+         * Converts a paste site link to a raw link.
+         *
+         * @param link The website link.
+         * @param site The paste site that [link] belongs to.
+         */
         private fun pasteLinkToRaw(link: String, site: PasteSites): String {
             return when (site) {
                 PasteSites.PASTEEE -> link.replaceFirst("/p/", "/r/")

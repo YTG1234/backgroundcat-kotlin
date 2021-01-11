@@ -3,15 +3,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.4.21"
     kotlin("plugin.serialization") version "1.4.21"
+    id("org.jetbrains.dokka") version "1.4.20"
 }
 
 group = "io.github.ytg1234"
 version = "1.0"
 
 repositories {
-    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     mavenCentral()
     jcenter()
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     maven(url = "https://maven.kotlindiscord.com/repository/maven-snapshots/")
     maven(url = "https://maven.kotlindiscord.com/repository/maven-releases/")
 }
@@ -38,4 +39,13 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            displayName.set("BackgroundCat Kotlin")
+            includes.from("Module.md")
+        }
+    }
 }

@@ -8,14 +8,30 @@ import io.github.ytg1234.backgroundcatkotlin.util.log.LogProcessorWithOptions
 import io.github.ytg1234.backgroundcatkotlin.util.log.LogSource
 import io.github.ytg1234.backgroundcatkotlin.util.log.Mistake
 
-private fun sourceFromLog(text: String): LogSource {
+/**
+ * Returns a [LogSource] that a specified log is coming from.
+ *
+ * @param text The log.
+ *
+ * @return The source of this log.
+ */
+fun sourceFromLog(text: String): LogSource {
     return if (text.startsWith("MultiMC version")) LogSource.MultiMc
     else LogSource.NotMultiMc
 }
 
+/**
+ * Map of a [String] id and a [LogProcessorWithOptions].
+ */
 val processors = mutableMapOf<String, LogProcessorWithOptions>()
 
-fun addProcessor(id: String, logProcessor: LogProcessorWithOptions) {
+/**
+ * Adds a new [LogProcessorWithOptions] to [the map][processors].
+ *
+ * @param id The unique identifier for this processor.
+ * @param processor The processor being added.
+ */
+fun addProcessor(id: String, processor: LogProcessorWithOptions) {
     if (id == "") throw IllegalArgumentException("Tried to add a processor for empty ID!")
     if (processors[id] != null) throw IllegalArgumentException("Tried to add a processor for ID $id which was already added!")
 
@@ -24,20 +40,69 @@ fun addProcessor(id: String, logProcessor: LogProcessorWithOptions) {
         return
     }
 
-    processors[id] = logProcessor
+    processors[id] = processor
 }
 
-fun withProcessor(id: String, options: Set<LogProcessorOption> = setOf(), parser: Log.() -> Mistake?) =
-    addProcessor(id, LogProcessorWithOptions.of(options, parser))
+/**
+ * Adds a new [LogProcessorWithOptions] to [the map][processors], but
+ * with more syntax sugar.
+ *
+ * @param id The unique identifier for this processor.
+ * @param options A set of [LogProcessorOption]s that are passed to the constructor.
+ * @param processor The [process][LogProcessorWithOptions.process] function of the processor, from a different point of view.
+ *
+ * @see addProcessor
+ */
+fun withProcessor(id: String, options: Set<LogProcessorOption> = setOf(), processor: Log.() -> Mistake?) =
+    addProcessor(id, LogProcessorWithOptions.of(options, processor))
 
-fun withProcessor(id: String, option: LogProcessorOption, parser: Log.() -> Mistake?) =
-    withProcessor(id, setOf(option), parser)
+/**
+ * More syntax sugar for [addProcessor]!
+ *
+ * @param id The unique identifier for this processor.
+ * @param options The options being passed to the constructor.
+ * @param processor The [process][LogProcessorWithOptions.process] function of the processor, from a different point of view.
+ *
+ * @see withProcessor
+ * @see addProcessor
+ */
+fun withProcessor(id: String, vararg options: LogProcessorOption, processor: Log.() -> Mistake?) =
+    withProcessor(id, setOf(*options), processor)
 
-fun mistakesFromLog(text: String): List<Mistake> {
+/**
+ * Scans a log, runs processors and constructs a list
+ * of [Mistake]s.
+ *
+ * If a processor has the [CancelOthers][LogProcessorOption.CancelOthers] option,
+ * other processors will not be executed after it.
+ *
+ * @param text The log to process.
+ *
+ * @return A list of [Mistake]s that are present in the log.
+ *
+ * @see LogProcessorWithOptions
+ * @see Log
+ * @see Mistake
+ */
+fun mistakesFromLog(text: String) = mistakesFromLog(Log(sourceFromLog(text), text))
+
+/**
+ * Scans a log, runs processors and constructs a list
+ * of [Mistake]s.
+ *
+ * If a processor has the [CancelOthers][LogProcessorOption.CancelOthers] option,
+ * other processors will not be executed after it.
+ *
+ * @param log The log to process.
+ *
+ * @return A list of [Mistake]s that are present in the log.
+ *
+ * @see LogProcessorWithOptions
+ * @see Log
+ * @see Mistake
+ */
+fun mistakesFromLog(log: Log): List<Mistake> {
     val mistakes = mutableListOf<Mistake>()
-    val source = sourceFromLog(text)
-    val log = Log(source, text)
-
     val ran = mutableListOf<String>()
 
     for ((id, processor) in processors) {
