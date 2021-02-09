@@ -1,4 +1,4 @@
-# Module KordExt BackgroundCat - Default Processors
+# Module ext-defaults
 This module contains all the default processors - you can think of it like a "standard library" of sorts.
 
 # Package io.github.ytg1234.kordextbackgroundcat

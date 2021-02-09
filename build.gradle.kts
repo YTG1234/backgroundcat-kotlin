@@ -2,17 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.30"
-    kotlin("plugin.serialization") version "1.4.30"
+    kotlin("plugin.serialization") version "1.4.30" apply false
     id("org.jetbrains.dokka") version "1.4.20"
 }
 
-group = "io.github.ytg1234"
-version = "1.0.0"
-
 allprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "org.jetbrains.dokka")
-
     repositories {
         mavenCentral()
         jcenter()
@@ -20,6 +14,13 @@ allprojects {
         maven(url = "https://maven.kotlindiscord.com/repository/maven-snapshots/")
         maven(url = "https://maven.kotlindiscord.com/repository/maven-releases/")
     }
+
+    if (this.path == ":") return@allprojects // fancy subprojects {}
+
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.dokka")
+
+    group = "io.github.ytg1234.kordextbackgroundcat"
 
     dependencies {
         implementation(kotlin("stdlib"))
@@ -37,7 +38,7 @@ allprojects {
     }
 }
 
-project(":base") {
+project(":ext-base") {
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "maven-publish")
 
@@ -60,13 +61,13 @@ project(":base") {
     }
 }
 
-project(":defaults") {
+project(":ext-defaults") {
     apply(plugin = "maven-publish")
 
     dependencies {
-        implementation(project(":base"))
+        implementation(project(":ext-base"))
 
-        testImplementation(project(":base"))
+        testImplementation(project(":ext-base"))
         testImplementation(sourceSets["main"].output)
     }
 
@@ -79,6 +80,9 @@ project(":defaults") {
         }
     }
 }
+
+group = "io.github.ytg1234"
+version = "1.0.0"
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {

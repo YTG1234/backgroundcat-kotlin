@@ -8,4 +8,4 @@ pluginManagement {
 
 rootProject.name = "kordext-backgroundcat"
 
-include("base", "defaults")
+include("ext-base", "ext-defaults")

@@ -1,4 +1,4 @@
-# Module KordExt BackgroundCat - Base
+# Module ext-base
 This module is the core of the project.
 
 ## Setup:
