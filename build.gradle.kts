@@ -40,7 +40,6 @@ allprojects {
 
 project(":ext-base") {
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
-    apply(plugin = "maven-publish")
 
     dependencies {
         implementation("org.slf4j", "slf4j-simple", "1.7.19")
@@ -62,8 +61,6 @@ project(":ext-base") {
 }
 
 project(":ext-defaults") {
-    apply(plugin = "maven-publish")
-
     dependencies {
         implementation(project(":ext-base"))
 
