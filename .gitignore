@@ -13,5 +13,5 @@ build
 build/
 
 # Project exclude paths
-/out/
+out/
 /out/production/classes/

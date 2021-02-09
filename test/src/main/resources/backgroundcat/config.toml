@@ -1,0 +1,5 @@
+[processors]
+disabled = [
+    "mmc_program_files"
+]
+failOnDuplicate = false

@@ -7,3 +7,5 @@ pluginManagement {
 }
 
 rootProject.name = "backgroundcat-kotlin"
+
+include("base", "defaults", "test")

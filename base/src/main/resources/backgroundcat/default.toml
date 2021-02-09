@@ -1,0 +1,3 @@
+[processors]
+disabled = []
+failOnDuplicate = true
