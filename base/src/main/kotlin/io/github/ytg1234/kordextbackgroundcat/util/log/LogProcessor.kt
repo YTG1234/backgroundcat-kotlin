@@ -1,4 +1,4 @@
-package io.github.ytg1234.backgroundcatkotlin.util.log
+package io.github.ytg1234.kordextbackgroundcat.util.log
 
 /**
  * A [LogProcessor] is an object that receives a [Log] and processes it

@@ -1,12 +1,21 @@
-package io.github.ytg1234.backgroundcatkotlin.util
+package io.github.ytg1234.kordextbackgroundcat.util
 
-import io.github.ytg1234.backgroundcatkotlin.util.log.LogProcessorOption
-import io.github.ytg1234.backgroundcatkotlin.util.log.LogSource
-import io.github.ytg1234.backgroundcatkotlin.util.log.Mistake
-import io.github.ytg1234.backgroundcatkotlin.util.log.Severity
-import io.github.ytg1234.backgroundcatkotlin.withProcessor
+import io.github.ytg1234.kordextbackgroundcat.util.log.LogProcessorOption
+import io.github.ytg1234.kordextbackgroundcat.util.log.LogSource
+import io.github.ytg1234.kordextbackgroundcat.util.log.Mistake
+import io.github.ytg1234.kordextbackgroundcat.util.log.Severity
+import io.github.ytg1234.kordextbackgroundcat.withProcessor
 
-fun setupDefaultParsers(multiMc: Boolean, nonFabric: Boolean, fabric: Boolean) {
+/**
+ * Registers processors based on the options provided.
+ *
+ * @param multiMc register MultiMC-specific processors (e.g. `server_java`)
+ * @param nonFabric register processors that detect errors that cannot happen in a FabricMC environment
+ * @param fabric register processors that detect error that can *only* happen in a FabricMC environment
+ *
+ * @author YTG1234
+ */
+fun setupDefaultProcessors(multiMc: Boolean, nonFabric: Boolean, fabric: Boolean) {
     addCancelling(fabric)
 
     setupCommonErrors(fabric)
@@ -17,10 +26,18 @@ fun setupDefaultParsers(multiMc: Boolean, nonFabric: Boolean, fabric: Boolean) {
     if (fabric) setupLater()
 }
 
+/**
+ * Registers the errors that are the most common to happen.
+ *
+ * @param fabric register FabricMC-specific processors
+ */
 private fun setupCommonErrors(fabric: Boolean) {
     if (fabric) {
         withProcessor("fabric_api_missing") {
-            if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains("requires {fabric @")) {
+            if (contains("net.fabricmc.loader.discovery.ModResolutionException: Could not find required mod:") && contains(
+                    "requires {fabric @"
+                )
+            ) {
                 Mistake(
                     Severity.Severe,
                     "You are missing Fabric API, which is required by a mod. " +
@@ -56,17 +73,22 @@ private fun setupCommonErrors(fabric: Boolean) {
     }
 }
 
+/**
+ * Registers uncommon errors that people don't usually get.
+ *
+ * @param nonFabric register processors that will never trigger in a FabricMC environment
+ */
 private fun setupUncommonErrors(nonFabric: Boolean) {
-    withProcessor("macos_too_new_java") {
-        if (contains("Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'")) {
-            Mistake(
-                Severity.Severe,
-                "You are using too new a Java version. Please follow the steps on this wiki page to install 8u241: https://github.com/MultiMC/MultiMC5/wiki/Java-on-macOS"
-            )
-        } else null
-    }
-
     if (nonFabric) {
+        withProcessor("macos_too_new_java") {
+            if (contains("Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'")) {
+                Mistake(
+                    Severity.Severe,
+                    "You are using too new a Java version. Please follow the steps on this wiki page to install 8u241: https://github.com/MultiMC/MultiMC5/wiki/Java-on-macOS"
+                )
+            } else null
+        }
+
         withProcessor("id_range_exceeded") {
             if (contains("java.lang.RuntimeException: Invalid id 4096 - maximum id range exceeded.")) {
                 Mistake(
@@ -78,6 +100,11 @@ private fun setupUncommonErrors(nonFabric: Boolean) {
     }
 }
 
+/**
+ * Registers processors that trigger when an error occurs involving a known, specific mod.
+ *
+ * @param nonFabric register processors that cannot trigger in a FabricMC environment (e.g. Shaders Mod)
+ */
 private fun setupModSpecificErrors(nonFabric: Boolean) {
     if (nonFabric) {
         withProcessor("shadermod_optifine_conflict") {
@@ -103,6 +130,9 @@ private fun setupModSpecificErrors(nonFabric: Boolean) {
     }
 }
 
+/**
+ * Registers processors that can only trigger when the running launcher is [MultiMC](https://multimc.org/).
+ */
 private fun setupMultiMcSpecificErrors() {
     withProcessor("server_java") {
         if (contains("-Bit Server VM warning")) {
@@ -159,13 +189,20 @@ private fun setupMultiMcSpecificErrors() {
     }
 }
 
+/**
+ * Registers processors that will cancel other processors from running after them.
+ *
+ * This should be called first.
+ *
+ * @param fabric register FabricMC-specific processors
+ */
 private fun addCancelling(fabric: Boolean) {
     withProcessor("tlauncher", LogProcessorOption.CancelOthers) {
         val tLauncherTriggers = listOf(
             Regex("""Starting TLauncher \d+\.\d+"""),
             Regex("""\[Launcher] Running under TLauncher \d+\.\d+""")
         )
-        if (tLauncherTriggers.stream().anyMatch(this::contains)) {
+        if (tLauncherTriggers.any(this::contains)) {
             Mistake(
                 Severity.NoSupport,
                 "You are using TLauncher, which is illegal and breaks the Discord TOS. Sorry, we can't help you.\n" +
@@ -183,7 +220,7 @@ private fun addCancelling(fabric: Boolean) {
                 "ares"
             )
 
-            if (hacks.stream().anyMatch { contains(Regex("""\[FabricLoader] Loading \d+ mods:.+$it@.+""")) }) {
+            if (hacks.any { contains(Regex("""\[FabricLoader] Loading \d+ mods:.+$it@.+""")) }) {
                 Mistake(
                     Severity.NoSupport,
                     "You are using a hacked client, which breaks the Discord TOS. Sorry, we can't help you."
@@ -193,6 +230,9 @@ private fun addCancelling(fabric: Boolean) {
     }
 }
 
+/**
+ * Registers other processors not covered by previous methods.
+ */
 private fun setupLater() {
     withProcessor("dependency", LogProcessorOption.CancelIfRan("fabric_api_missing", "malilib")) {
         val regex = Regex("""requires \{([a-zA-Z0-9_-]+) @ \[(.+)]}""")

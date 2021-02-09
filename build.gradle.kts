@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.ytg1234"
-version = "1.0"
+version = "1.0.0"
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
@@ -35,19 +35,11 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.useIR = true
     }
-
-    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-        dokkaSourceSets {
-            named("main") {
-                displayName.set("BackgroundCat Kotlin")
-                includes.from("Module.md")
-            }
-        }
-    }
 }
 
 project(":base") {
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "maven-publish")
 
     dependencies {
         implementation("org.slf4j", "slf4j-simple", "1.7.19")
@@ -57,18 +49,43 @@ project(":base") {
         implementation("com.uchuhimo", "konf-core", "1.0.0")
         implementation("com.uchuhimo", "konf-toml", "1.0.0")
     }
-}
 
-project(":defaults") {
-    dependencies {
-        implementation(project(":base"))
+    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+        dokkaSourceSets {
+            named("main") {
+                displayName.set("KordExt BackgroundCat - Base")
+                includes.from("Module.md")
+            }
+        }
     }
 }
 
-project(":test") {
+project(":defaults") {
+    apply(plugin = "maven-publish")
+
     dependencies {
         implementation(project(":base"))
-        implementation(project(":defaults"))
+
+        testImplementation(project(":base"))
+        testImplementation(sourceSets["main"].output)
+    }
+
+    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+        dokkaSourceSets {
+            named("main") {
+                displayName.set("KordExt BackgroundCat - Default Processors")
+                includes.from("Module.md")
+            }
+        }
+    }
+}
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            displayName.set("KordExt BackgroundCat")
+            includes.from("Module.md")
+        }
     }
 }
 

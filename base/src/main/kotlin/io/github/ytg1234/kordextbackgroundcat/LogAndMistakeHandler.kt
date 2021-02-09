@@ -1,12 +1,12 @@
-package io.github.ytg1234.backgroundcatkotlin
+package io.github.ytg1234.kordextbackgroundcat
 
-import io.github.ytg1234.backgroundcatkotlin.util.internal.ConfigHolder
-import io.github.ytg1234.backgroundcatkotlin.util.internal.logger
-import io.github.ytg1234.backgroundcatkotlin.util.log.Log
-import io.github.ytg1234.backgroundcatkotlin.util.log.LogProcessorOption
-import io.github.ytg1234.backgroundcatkotlin.util.log.LogProcessorWithOptions
-import io.github.ytg1234.backgroundcatkotlin.util.log.LogSource
-import io.github.ytg1234.backgroundcatkotlin.util.log.Mistake
+import io.github.ytg1234.kordextbackgroundcat.util.internal.ConfigHolder
+import io.github.ytg1234.kordextbackgroundcat.util.internal.logger
+import io.github.ytg1234.kordextbackgroundcat.util.log.Log
+import io.github.ytg1234.kordextbackgroundcat.util.log.LogProcessorOption
+import io.github.ytg1234.kordextbackgroundcat.util.log.LogProcessorWithOptions
+import io.github.ytg1234.kordextbackgroundcat.util.log.LogSource
+import io.github.ytg1234.kordextbackgroundcat.util.log.Mistake
 
 /**
  * Returns a [LogSource] that a specified log is coming from.
@@ -87,9 +87,9 @@ fun withProcessor(id: String, vararg options: LogProcessorOption, processor: Log
  * @see Log
  * @see Mistake
  */
-fun mistakesFromLog(text: String) = io.github.ytg1234.backgroundcatkotlin.mistakesFromLog(
+fun mistakesFromLog(text: String) = io.github.ytg1234.kordextbackgroundcat.mistakesFromLog(
     Log(
-        io.github.ytg1234.backgroundcatkotlin.sourceFromLog(text),
+        io.github.ytg1234.kordextbackgroundcat.sourceFromLog(text),
         text
     )
 )

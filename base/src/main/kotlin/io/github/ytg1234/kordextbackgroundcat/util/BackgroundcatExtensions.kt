@@ -1,7 +1,7 @@
-package io.github.ytg1234.backgroundcatkotlin.util
+package io.github.ytg1234.kordextbackgroundcat.util
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
-import io.github.ytg1234.backgroundcatkotlin.BackgroundCatExtension
+import io.github.ytg1234.kordextbackgroundcat.BackgroundCatExtension
 
 /**
  * An extension function that adds the [BackgroundCatExtension]

@@ -6,6 +6,6 @@ pluginManagement {
     }
 }
 
-rootProject.name = "backgroundcat-kotlin"
+rootProject.name = "kordext-backgroundcat"
 
-include("base", "defaults", "test")
+include("base", "defaults")

@@ -1,4 +1,4 @@
-package io.github.ytg1234.backgroundcatkotlin.config
+package io.github.ytg1234.kordextbackgroundcat.config
 
 import com.uchuhimo.konf.ConfigSpec
 

@@ -1,11 +1,11 @@
-package io.github.ytg1234.backgroundcatkotlin
+package io.github.ytg1234.kordextbackgroundcat
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import dev.kord.common.Color
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.event.message.MessageCreateEvent
-import io.github.ytg1234.backgroundcatkotlin.util.internal.logger
+import io.github.ytg1234.kordextbackgroundcat.util.internal.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 

@@ -1,4 +1,4 @@
-package io.github.ytg1234.backgroundcatkotlin.util.log
+package io.github.ytg1234.kordextbackgroundcat.util.log
 
 /**
  * Represents a log - Constructed from a [LogSource] and some text.

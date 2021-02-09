@@ -1,9 +1,9 @@
-package io.github.ytg1234.backgroundcatkotlin.util.internal
+package io.github.ytg1234.kordextbackgroundcat.util.internal
 
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.Feature
 import com.uchuhimo.konf.source.toml
-import io.github.ytg1234.backgroundcatkotlin.config.ProcessorSpec
+import io.github.ytg1234.kordextbackgroundcat.config.ProcessorSpec
 import mu.KotlinLogging
 import java.io.File
 
